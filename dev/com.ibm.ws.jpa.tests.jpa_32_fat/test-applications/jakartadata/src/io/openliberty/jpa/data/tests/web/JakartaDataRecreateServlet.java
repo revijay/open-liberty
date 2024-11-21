@@ -1354,10 +1354,10 @@ public class JakartaDataRecreateServlet extends FATServlet {
     public void testOLGH29781() throws Exception {
         ZoneId ET = ZoneId.of("America/New_York");
         Instant when = ZonedDateTime.of(2022, 4, 29, 12, 0, 0, 0, ET)
-                .toInstant();
+                        .toInstant();
         Store s1 = Store.of(2022, 4, 29, "Billy", 12L);
         Store s2 = Store.of(2024, 5, 12, "Bobby", 9L);
-        
+
         int count;
 
         tx.begin();
@@ -1368,8 +1368,8 @@ public class JakartaDataRecreateServlet extends FATServlet {
         tx.begin();
         try {
             count = em.createQuery("DELETE FROM Store WHERE this.time>:when")
-                    .setParameter("when", when)
-                    .executeUpdate();
+                            .setParameter("when", when)
+                            .executeUpdate();
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
@@ -1519,7 +1519,7 @@ public class JakartaDataRecreateServlet extends FATServlet {
     }
 
     @Test //Original issue: https://github.com/OpenLiberty/open-liberty/issues/29443
-    @Ignore("Additional Issue: ZonedDateTime stored as blob, cannot do comparison of blobs on most databases")
+    //@Ignore("Additional Issue: ZonedDateTime stored as blob, cannot do comparison of blobs on most databases")
     public void testOLGH29443ZonedDateTime() throws Exception {
         deleteAllEntities(DemographicInformation.class);
 
