@@ -11,6 +11,7 @@ package io.openliberty.jpa.data.tests.models;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -27,7 +28,7 @@ import jakarta.persistence.Id;
 public class DemographicInformation {
 
     @Column
-    public ZonedDateTime collectedOn;
+    public OffsetDateTime collectedOn;
 
     @GeneratedValue
     @Id
@@ -46,7 +47,7 @@ public class DemographicInformation {
                                             long numFullTimeWorkers,
                                             double intragovernmentalDebt, double publicDebt) {
         DemographicInformation inst = new DemographicInformation();
-        inst.collectedOn = ZonedDateTime.of(year, month, day, 12, 0, 0, 0, ZoneId.of("America/New_York"));
+        inst.collectedOn = ZonedDateTime.of(year, month, day, 12, 0, 0, 0, ZoneId.of("America/New_York")).toOffsetDateTime();
         inst.numFullTimeWorkers = BigInteger.valueOf(numFullTimeWorkers);
         inst.intragovernmentalDebt = BigDecimal.valueOf(intragovernmentalDebt);
         inst.publicDebt = BigDecimal.valueOf(publicDebt);

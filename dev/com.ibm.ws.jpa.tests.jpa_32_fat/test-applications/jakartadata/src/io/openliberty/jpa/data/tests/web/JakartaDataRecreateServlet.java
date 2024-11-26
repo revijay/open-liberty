@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
@@ -1524,7 +1525,7 @@ public class JakartaDataRecreateServlet extends FATServlet {
         deleteAllEntities(DemographicInformation.class);
 
         ZoneId ET = ZoneId.of("America/New_York");
-        ZonedDateTime when = ZonedDateTime.of(2022, 4, 29, 12, 0, 0, 0, ET);
+        OffsetDateTime when = ZonedDateTime.of(2022, 4, 29, 12, 0, 0, 0, ET).toOffsetDateTime();
 
         DemographicInformation US2022 = DemographicInformation.of(2022, 4, 29, 132250000, 6526909395140.41, 23847245116757.60);
         DemographicInformation US2007 = DemographicInformation.of(2007, 4, 30, 121090000, 3833110332444.19, 5007058051986.64);
