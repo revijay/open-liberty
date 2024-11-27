@@ -54,6 +54,7 @@ import io.openliberty.jpa.data.tests.models.City;
 import io.openliberty.jpa.data.tests.models.CityId;
 import io.openliberty.jpa.data.tests.models.Coordinate;
 import io.openliberty.jpa.data.tests.models.DemographicInfo;
+import io.openliberty.jpa.data.tests.models.DemographicInfoWithOffset;
 import io.openliberty.jpa.data.tests.models.DemographicInformation;
 import io.openliberty.jpa.data.tests.models.Item;
 import io.openliberty.jpa.data.tests.models.Line;
@@ -1520,12 +1521,12 @@ public class JakartaDataRecreateServlet extends FATServlet {
     }
 
     @Test //Original issue: https://github.com/OpenLiberty/open-liberty/issues/29443
-    //@Ignore("Additional Issue: ZonedDateTime stored as blob, cannot do comparison of blobs on most databases")
+    @Ignore("Additional Issue: ZonedDateTime stored as blob, cannot do comparison of blobs on most databases")
     public void testOLGH29443ZonedDateTime() throws Exception {
         deleteAllEntities(DemographicInformation.class);
 
         ZoneId ET = ZoneId.of("America/New_York");
-        OffsetDateTime when = ZonedDateTime.of(2022, 4, 29, 12, 0, 0, 0, ET).toOffsetDateTime();
+        ZonedDateTime when = ZonedDateTime.of(2022, 4, 29, 12, 0, 0, 0, ET);
 
         DemographicInformation US2022 = DemographicInformation.of(2022, 4, 29, 132250000, 6526909395140.41, 23847245116757.60);
         DemographicInformation US2007 = DemographicInformation.of(2007, 4, 30, 121090000, 3833110332444.19, 5007058051986.64);
@@ -1547,6 +1548,55 @@ public class JakartaDataRecreateServlet extends FATServlet {
             tx.begin();
             results = em
                             .createQuery("SELECT this.numFullTimeWorkers FROM DemographicInformation WHERE this.collectedOn=:when",
+                                         BigInteger.class)
+                            .setParameter("when", when)
+                            .getResultList();
+            tx.commit();
+
+            try {
+                assertNotNull("Query should not have returned null after iteration " + i, results);
+                // Recreate - an empty list is returned
+                assertFalse("Query should not have returned an empty list after iteration " + i, results.isEmpty());
+                assertEquals("Query should not have returned more than one result after iteration " + i, 1,
+                             results.size());
+                assertEquals(US2022.numFullTimeWorkers, results.get(0));
+            } catch (AssertionError e) {
+                errors.add(e);
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            throw new AssertionError("Executing the same query returned incorrect results " + errors.size() + " out of 10 executions", errors.get(0));
+        }
+    }
+
+    @Test //Original issue: https://github.com/OpenLiberty/open-liberty/issues/29443
+    public void testOLGH29443OffsetDateTime() throws Exception {
+        deleteAllEntities(DemographicInfoWithOffset.class);
+
+        ZoneId ET = ZoneId.of("America/New_York");
+        OffsetDateTime when = ZonedDateTime.of(2022, 4, 29, 12, 0, 0, 0, ET).toOffsetDateTime();
+
+        DemographicInfoWithOffset US2022 = DemographicInfoWithOffset.of(2022, 4, 29, 132250000, 6526909395140.41, 23847245116757.60);
+        DemographicInfoWithOffset US2007 = DemographicInfoWithOffset.of(2007, 4, 30, 121090000, 3833110332444.19, 5007058051986.64);
+
+        List<BigInteger> results;
+
+        tx.begin();
+        em.persist(US2022);
+        em.persist(US2007);
+        tx.commit();
+
+        List<Error> errors = new ArrayList<>();
+
+        Thread.sleep(Duration.ofSeconds(1).toMillis());
+
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Executing SELECT query, iteration: " + i);
+
+            tx.begin();
+            results = em
+                            .createQuery("SELECT this.numFullTimeWorkers FROM DemographicInfoWithOffset WHERE this.collectedOn=:when",
                                          BigInteger.class)
                             .setParameter("when", when)
                             .getResultList();
