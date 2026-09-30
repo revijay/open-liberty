@@ -19,6 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
                 Validation40Test.class,
+                TypeValidatorSelectionTest.class,
 })
 public class FATSuite {
 
