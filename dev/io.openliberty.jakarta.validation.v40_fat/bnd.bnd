@@ -17,7 +17,8 @@ src: \
 	fat/src,\
 	test-applications/val40/src,\
 	test-applications/val40attr/src,\
-	test-applications/val40init/src
+	test-applications/val40init/src,\
+	test-applications/val40tsr/src
 
 fat.project: true
 

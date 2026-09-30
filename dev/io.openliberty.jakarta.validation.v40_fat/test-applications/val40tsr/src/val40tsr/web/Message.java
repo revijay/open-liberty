@@ -10,17 +10,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package io.openliberty.jakarta.validation.v40.fat;
+package val40tsr.web;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/**
+ * A simple message bean with a {@code @HasContent} constraint on its
+ * {@code text} field.
+ *
+ * <p>{@code String} implements both {@code CharSequence} and
+ * {@code Serializable}. The {@code @HasContent} constraint has validators
+ * registered for both interfaces, reproducing the Table 5.1 scenario from
+ * BVAL-698.
+ */
+public class Message {
 
-@RunWith(Suite.class)
-@SuiteClasses({
-                Validation40Test.class,
-                TypeValidatorSelectionTest.class,
-})
-public class FATSuite {
+    @HasContent
+    private final String text;
 
+    public Message(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
 }
