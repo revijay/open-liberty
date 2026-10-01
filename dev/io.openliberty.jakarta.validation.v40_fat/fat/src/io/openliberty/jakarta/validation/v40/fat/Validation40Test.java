@@ -26,21 +26,24 @@ import componenttest.topology.impl.LibertyServer;
 import componenttest.topology.utils.FATServletClient;
 import val40.web.Validation40TestServlet;
 import val40attr.web.ConstraintDescriptorTestServlet;
+import val40cascade.web.CascadeValidTestServlet;
 import val40grp.web.GroupSequenceTestServlet;
 import val40init.web.ConstraintValidatorInitContextTestServlet;
 
 @RunWith(FATRunner.class)
 public class Validation40Test extends FATServletClient {
 
-    public static final String APP_NAME      = "val40";
-    public static final String APP_NAME_ATTR = "val40attr";
-    public static final String APP_NAME_GRP  = "val40grp";
-    public static final String APP_NAME_INIT = "val40init";
+    public static final String APP_NAME         = "val40";
+    public static final String APP_NAME_ATTR    = "val40attr";
+    public static final String APP_NAME_CASCADE = "val40cascade";
+    public static final String APP_NAME_GRP     = "val40grp";
+    public static final String APP_NAME_INIT    = "val40init";
 
     @Server("validation.v40.fat")
     @TestServlets({
         @TestServlet(servlet = Validation40TestServlet.class,                   contextRoot = APP_NAME),
         @TestServlet(servlet = ConstraintDescriptorTestServlet.class,           contextRoot = APP_NAME_ATTR),
+        @TestServlet(servlet = CascadeValidTestServlet.class,                   contextRoot = APP_NAME_CASCADE),
         @TestServlet(servlet = GroupSequenceTestServlet.class,                  contextRoot = APP_NAME_GRP),
         @TestServlet(servlet = ConstraintValidatorInitContextTestServlet.class, contextRoot = APP_NAME_INIT),
     })
@@ -48,10 +51,11 @@ public class Validation40Test extends FATServletClient {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        ShrinkHelper.defaultApp(server, APP_NAME,      "val40.web");
-        ShrinkHelper.defaultApp(server, APP_NAME_ATTR, "val40attr.web");
-        ShrinkHelper.defaultApp(server, APP_NAME_GRP,  "val40grp.web");
-        ShrinkHelper.defaultApp(server, APP_NAME_INIT, "val40init.web");
+        ShrinkHelper.defaultApp(server, APP_NAME,         "val40.web");
+        ShrinkHelper.defaultApp(server, APP_NAME_ATTR,    "val40attr.web");
+        ShrinkHelper.defaultApp(server, APP_NAME_CASCADE, "val40cascade.web");
+        ShrinkHelper.defaultApp(server, APP_NAME_GRP,     "val40grp.web");
+        ShrinkHelper.defaultApp(server, APP_NAME_INIT,    "val40init.web");
 
         server.startServer();
     }
