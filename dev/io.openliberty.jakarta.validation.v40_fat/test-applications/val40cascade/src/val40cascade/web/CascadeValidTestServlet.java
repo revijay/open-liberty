@@ -55,7 +55,11 @@ import jakarta.validation.Validator;
  *   private List&lt;{@literal @}Valid Address&gt; addresses;
  * </pre>
  * Jakarta Validation 4.0 declares this combination as having
- * <em>undefined behaviour</em> and requires implementations to warn the user.
+ * <em>undefined behaviour</em>. The spec does not require a warning —
+ * the issue title mentions "encourage implementations to issue a warning"
+ * but that wording comes from the GitHub issue description only; what was
+ * actually merged into the 4.0 spec text is solely the undefined-behaviour
+ * declaration. Implementations that do not warn are fully spec-conformant.
  * In Hibernate Validator, the two annotations are merged and each element is
  * validated exactly once — but this is HV's private implementation choice,
  * not a spec guarantee. A future spec version will make this a hard error.

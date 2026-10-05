@@ -37,10 +37,11 @@ import jakarta.validation.constraints.NotBlank;
  *   <dt>{@link #bothAddresses} — BOTH placements (undefined behaviour)</dt>
  *   <dd>Both {@code @Valid} on the field AND {@code @Valid} on the type
  *       argument. Jakarta Validation 4.0 (issue #260) declares this
- *       combination as having <em>undefined behaviour</em> and requires
- *       implementations to warn the user. In Hibernate Validator today,
- *       the two annotations are merged and each element is validated exactly
- *       once — but this is HV's private choice, not a spec guarantee.</dd>
+ *       combination as having <em>undefined behaviour</em>. The spec does
+ *       not require implementations to warn — that wording appears only in
+ *       the GitHub issue description, not in the merged spec text. In
+ *       Hibernate Validator today, the two are merged and each element is
+ *       validated exactly once — HV's private choice, not a spec guarantee.</dd>
  * </dl>
  */
 public class Customer {
@@ -67,9 +68,9 @@ public class Customer {
      * Both placements on the same field — undefined behaviour per
      * Jakarta Validation 4.0 spec (issue #260).
      *
-     * <p>In Hibernate Validator, the two are merged and each Address
-     * is validated once. In a future spec version this will be a hard error.
-     * Implementations are required to log a warning when this is detected.
+     * <p>The spec declares this undefined; it does NOT require implementations
+     * to warn. In Hibernate Validator, the two are merged and each Address
+     * is validated once. A future spec version will make this a hard error.
      */
     @Valid
     private final List<@Valid Address> bothAddresses;
