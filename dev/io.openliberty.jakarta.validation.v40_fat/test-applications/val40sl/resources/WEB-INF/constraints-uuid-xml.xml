@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2025 IBM Corporation and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        IBM Corporation - initial API and implementation
+
+    XML registration path for issue #257 — validator bound via
+    <constraint-definition> instead of @Constraint(validatedBy=...) or ServiceLoader.
+
+    <constraint-definition annotation="..."> identifies the constraint annotation.
+    <validated-by include-existing-validators="false"> lists the validator class(es).
+
+    include-existing-validators="false"  — replaces the validatedBy list entirely.
+    include-existing-validators="true"   — appends to the existing validatedBy list.
+-->
+<constraint-mappings
+    xmlns="https://jakarta.ee/xml/ns/validation/mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/validation/mapping
+        https://jakarta.ee/xml/ns/validation/mapping/validation-mapping-3.0.xsd"
+    version="3.0">
+
+    <!--
+        Bind ValidUuidXmlValidator to the @ValidUuid2 annotation.
+        @ValidUuid2 has validatedBy={} (empty). This XML entry is the sole
+        source of a validator for this constraint.
+
+        include-existing-validators="false" means: ignore anything in
+        validatedBy on the annotation. Since it's empty here it makes no
+        difference, but it demonstrates the "XML replaces annotation" contract.
+    -->
+    <constraint-definition annotation="val40sl.web.ValidUuid2">
+        <validated-by include-existing-validators="false">
+            <value>val40sl.web.ValidUuidXmlValidator</value>
+        </validated-by>
+    </constraint-definition>
+
+</constraint-mappings>

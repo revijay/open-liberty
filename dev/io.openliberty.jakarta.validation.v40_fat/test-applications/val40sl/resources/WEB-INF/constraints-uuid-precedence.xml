@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2025 IBM Corporation and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        IBM Corporation - initial API and implementation
+
+    Precedence test for issue #257 — all three registration mechanisms present.
+
+    @ValidUuid3 already has:
+      - validatedBy = { ValidUuidAnnotationValidator.class }  (annotation path)
+      - ValidUuid3ServiceLoaderValidator                      (service-loader path)
+
+    This file adds ValidUuid3XmlValidator via XML.
+
+    Two scenarios tested (controlled by include-existing-validators):
+
+      "false" (used here): XML list REPLACES annotation + service-loader list.
+                           Only ValidUuid3XmlValidator is used.
+                           ValidUuidAnnotationValidator.wasInvoked == false
+                           ValidUuid3ServiceLoaderValidator.wasInvoked == false
+                           ValidUuid3XmlValidator.wasInvoked == true
+
+      "true":              XML list is ADDED to annotation + service-loader list.
+                           All three validators are present in the resolution set.
+                           (The runtime then applies the standard type-resolution
+                           algorithm to pick the one validator for String.)
+-->
+<constraint-mappings
+    xmlns="https://jakarta.ee/xml/ns/validation/mapping"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/validation/mapping
+        https://jakarta.ee/xml/ns/validation/mapping/validation-mapping-3.0.xsd"
+    version="3.0">
+
+    <!--
+        include-existing-validators="false":
+        XML wins — ValidUuid3XmlValidator is the only validator used.
+        The annotation's validatedBy list and the service-loader entry are
+        both discarded by the runtime.
+    -->
+    <constraint-definition annotation="val40sl.web.ValidUuid3">
+        <validated-by include-existing-validators="false">
+            <value>val40sl.web.ValidUuid3XmlValidator</value>
+        </validated-by>
+    </constraint-definition>
+
+</constraint-mappings>
