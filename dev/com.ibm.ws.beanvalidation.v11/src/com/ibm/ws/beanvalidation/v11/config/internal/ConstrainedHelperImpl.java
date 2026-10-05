@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 IBM Corporation and others.
+ * Copyright (c) 2020, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.lang.annotation.ElementType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -119,8 +117,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
             List<Method> methods = new ArrayList<Method>();
 
             for (Class<?> hierarchyClass : getHierarchy(clazz)) {
-                Method[] hierarchyClassMethods = AccessController.doPrivileged((PrivilegedAction<Method[]>) () -> hierarchyClass.getMethods());
-                Collections.addAll(methods, hierarchyClassMethods);
+                Collections.addAll(methods, hierarchyClass.getMethods());
             }
 
             return methods;
@@ -246,7 +243,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
 
     private ClassLoaderTuple configureBvalClassloader(ClassLoader cl) {
         if (cl == null) {
-            cl = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+            cl = Thread.currentThread().getContextClassLoader();
         }
         if (cl != null) {
             if (classLoadingService.isThreadContextClassLoader(cl)) {
@@ -259,7 +256,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
     }
 
     private ClassLoader createTCCL(ClassLoader parentCL) {
-        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> classLoadingService.createThreadContextClassLoader(parentCL));
+        return classLoadingService.createThreadContextClassLoader(parentCL);
     }
 
     private EnumSet<ExecutableType> executableTypesDefinedOnConstructor(Constructor<?> constructor) {
@@ -358,7 +355,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
                                                                          null,
                                                                          null);
 
-        ResolvedMethod[] resolvedMethods = AccessController.doPrivileged((PrivilegedAction<ResolvedMethod[]>) () -> typeWithMembers.getMemberMethods());
+        ResolvedMethod[] resolvedMethods = typeWithMembers.getMemberMethods();
 
         // The ClassMate doc says that overridden methods are flattened to one
         // resolved method. But that is the case only for methods without any
@@ -490,10 +487,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
     }
 
     private void releaseLoader(ClassLoader tccl) {
-        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            classLoadingService.destroyThreadContextClassLoader(tccl);
-            return null;
-        });
+        classLoadingService.destroyThreadContextClassLoader(tccl);
     }
 
     private Method replaceWithOverriddenOrInterfaceMethod(Method method, List<Method> allMethodsOfType) {
@@ -524,7 +518,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
         ClassLoaderTuple tuple = null;
 
         try {
-            ThreadContextAccessor tca = AccessController.doPrivileged((PrivilegedAction<ThreadContextAccessor>) () -> ThreadContextAccessor.getThreadContextAccessor());
+            ThreadContextAccessor tca = ThreadContextAccessor.getThreadContextAccessor();
             tuple = configureBvalClassloader(appCl);
             classLoader = tuple.classLoader;
 

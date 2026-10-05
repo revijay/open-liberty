@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020, 2024 IBM Corporation and others.
+ * Copyright (c) 2020, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -18,8 +18,6 @@ import java.lang.annotation.ElementType;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -108,14 +106,10 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
             List<Method> methods = newArrayList();
 
             for (Class<?> hierarchyClass : ClassHierarchyHelper.getHierarchy(clazz)) {
-                Collections.addAll(methods, run((PrivilegedAction<Method[]>) () -> hierarchyClass.getMethods()));
+                Collections.addAll(methods, hierarchyClass.getMethods());
             }
 
             return methods;
-        }
-
-        private static <T> T run(PrivilegedAction<T> action) {
-            return System.getSecurityManager() != null ? AccessController.doPrivileged(action) : action.run();
         }
     }
 
@@ -157,7 +151,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
 
     private ClassLoaderTuple configureBvalClassloader(ClassLoader cl) {
         if (cl == null) {
-            cl = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+            cl = Thread.currentThread().getContextClassLoader();
         }
         if (cl != null) {
             if (classLoadingService.isThreadContextClassLoader(cl)) {
@@ -170,7 +164,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
     }
 
     private ClassLoader createTCCL(ClassLoader parentCL) {
-        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> classLoadingService.createThreadContextClassLoader(parentCL));
+        return classLoadingService.createThreadContextClassLoader(parentCL);
     }
 
     private EnumSet<ExecutableType> executableTypesDefinedOnConstructor(Constructor<?> constructor) {
@@ -281,10 +275,7 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
     }
 
     private void releaseLoader(ClassLoader tccl) {
-        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            classLoadingService.destroyThreadContextClassLoader(tccl);
-            return null;
-        });
+        classLoadingService.destroyThreadContextClassLoader(tccl);
     }
 
     private Method replaceWithOverriddenOrInterfaceMethod(Method method, List<Method> allMethodsOfType) {
@@ -311,9 +302,9 @@ public class ConstrainedHelperImpl implements ConstrainedHelper {
             tuple = configureBvalClassloader(moduleClassLoader);
             ClassLoader tcclClassLoaderTmp = tuple.classLoader;
 
-            ClassLoader bvalClassLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> new Validation20ClassLoader(tcclClassLoaderTmp, moduleUri));
+            ClassLoader bvalClassLoader = new Validation20ClassLoader(tcclClassLoaderTmp, moduleUri);
 
-            ThreadContextAccessor tca = AccessController.doPrivileged((PrivilegedAction<ThreadContextAccessor>) () -> ThreadContextAccessor.getThreadContextAccessor());
+            ThreadContextAccessor tca = ThreadContextAccessor.getThreadContextAccessor();
 
             // set the thread context class loader to be used, must be reset in finally block
             setClassLoader = new SetContextClassLoaderPrivileged(tca);
