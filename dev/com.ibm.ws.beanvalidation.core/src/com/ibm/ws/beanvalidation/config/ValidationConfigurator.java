@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -587,27 +585,11 @@ public class ValidationConfigurator implements ValidationConfigurationInterface 
     }
 
     private static ClassLoader getContextClassLoader() {
-        if (System.getSecurityManager() == null)
-            return Thread.currentThread().getContextClassLoader();
-        else
-            return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
-                @Override
-                public ClassLoader run() {
-                    return Thread.currentThread().getContextClassLoader();
-                }
-            });
+        return Thread.currentThread().getContextClassLoader();
     }
 
     private static String getLineSeparatorProperty() {
-        if (System.getSecurityManager() == null)
-            return System.getProperty("line.separator");
-        else
-            return AccessController.doPrivileged(new PrivilegedAction<String>() {
-                @Override
-                public String run() {
-                    return System.getProperty("line.separator");
-                }
-            });
+        return System.getProperty("line.separator");
     }
 
 }

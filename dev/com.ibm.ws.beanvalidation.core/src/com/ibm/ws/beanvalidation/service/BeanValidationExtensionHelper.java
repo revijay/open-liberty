@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,11 @@
  *******************************************************************************/
 package com.ibm.ws.beanvalidation.service;
 
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.ValidatorFactory;
 
-import com.ibm.ejs.util.dopriv.SystemGetPropertyPrivileged;
 import com.ibm.ws.beanvalidation.ValidatorFactoryAccessor;
 import com.ibm.ws.runtime.metadata.ModuleMetaData;
 import com.ibm.wsspi.adaptable.module.Container;
@@ -35,7 +32,7 @@ public class BeanValidationExtensionHelper {
      * application (by checking the classpath, so this would include checking shared libraries, customer user
      * features, etc.).
      */
-    public static final boolean IS_VALIDATION_CLASSLOADING_ENABLED = Boolean.parseBoolean(AccessController.doPrivileged(new SystemGetPropertyPrivileged("com.ibm.ws.beanvalidation.allowMultipleConfigsPerApp", "true")));
+    public static final boolean IS_VALIDATION_CLASSLOADING_ENABLED = Boolean.parseBoolean(System.getProperty("com.ibm.ws.beanvalidation.allowMultipleConfigsPerApp", "true"));
 
     /**
      * This method should never be used by anyone other than com.ibm.ws.beanvalidation.v11.cdi.internal.ValidationExtension.
@@ -49,29 +46,17 @@ public class BeanValidationExtensionHelper {
         return ValidatorFactoryAccessor.getValidatorFactory(cl);
     }
 
-    public static ClassLoader newValidationClassLoader(final ClassLoader parent) {
+    public static ClassLoader newValidationClassLoader(ClassLoader parent) {
         if (IS_VALIDATION_CLASSLOADING_ENABLED) {
-            return AccessController.doPrivileged(new PrivilegedAction<ValidationClassLoader>() {
-
-                @Override
-                public ValidationClassLoader run() {
-                    return new ValidationClassLoader(parent);
-                }
-            });
+            return new ValidationClassLoader(parent);
         } else {
             return parent;
         }
     }
 
-    public static ClassLoader newValidation10ClassLoader(final ClassLoader parent) {
+    public static ClassLoader newValidation10ClassLoader(ClassLoader parent) {
         if (IS_VALIDATION_CLASSLOADING_ENABLED) {
-            return AccessController.doPrivileged(new PrivilegedAction<Validation10ClassLoader>() {
-
-                @Override
-                public Validation10ClassLoader run() {
-                    return new Validation10ClassLoader(parent);
-                }
-            });
+            return new Validation10ClassLoader(parent);
         } else {
             return parent;
         }
