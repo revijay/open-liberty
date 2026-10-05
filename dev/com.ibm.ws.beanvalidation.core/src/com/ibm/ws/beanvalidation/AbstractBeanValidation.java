@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2020 IBM Corporation and others.
+ * Copyright (c) 2012, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ package com.ibm.ws.beanvalidation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -115,12 +113,7 @@ public abstract class AbstractBeanValidation implements BeanValidation {
                 if (isTraceOn && tc.isDebugEnabled())
                     Tr.debug(tc, "No BeanValidation service; Client Container : getting default ValidatorFactory");
 
-                validatorFactory = AccessController.doPrivileged(new PrivilegedAction<ValidatorFactory>() {
-                    @Override
-                    public ValidatorFactory run() {
-                        return Validation.buildDefaultValidatorFactory();
-                    }
-                });
+                validatorFactory = Validation.buildDefaultValidatorFactory();
             } else {
                 throw new IllegalStateException("BeanValidation service is not available.");
             }

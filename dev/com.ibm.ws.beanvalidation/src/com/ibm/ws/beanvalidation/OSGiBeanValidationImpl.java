@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2024 IBM Corporation and others.
+ * Copyright (c) 2012, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.Map;
 
 import javax.validation.Configuration;
@@ -101,13 +99,6 @@ public class OSGiBeanValidationImpl extends AbstractBeanValidation implements Mo
     private final AtomicServiceReference<LoadConfig> loadConfigSR = new AtomicServiceReference<LoadConfig>(REFERENCE_LOAD_CONFIG);
 
     private Version runtimeVersion = new Version(1, 0, 0);
-
-    private static final PrivilegedAction<ThreadContextAccessor> getThreadContextAccessorAction = new PrivilegedAction<ThreadContextAccessor>() {
-        @Override
-        public ThreadContextAccessor run() {
-            return ThreadContextAccessor.getThreadContextAccessor();
-        }
-    };
 
     @Override
     public void registerValidatorFactory(ModuleMetaData mmd, ClassLoader cl, ValidatorFactory validatorFactory) {
@@ -586,7 +577,7 @@ public class OSGiBeanValidationImpl extends AbstractBeanValidation implements Mo
                     wasTcclCreated = true;
                 }
 
-                ThreadContextAccessor tca = System.getSecurityManager() == null ? ThreadContextAccessor.getThreadContextAccessor() : AccessController.doPrivileged(getThreadContextAccessorAction);
+                ThreadContextAccessor tca = ThreadContextAccessor.getThreadContextAccessor();
 
                 // set the thread context class loader to be used, must be reset in finally block
                 setClassLoader = new SetContextClassLoaderPrivileged(tca);

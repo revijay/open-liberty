@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 IBM Corporation and others.
+ * Copyright (c) 2010, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
 package com.ibm.ws.beanvalidation;
 
 import java.io.IOException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
@@ -36,14 +34,6 @@ public class ValidatorFactoryAccessor {
     private static final TraceComponent tc = Tr.register(CLASS_NAME,
                                                          "BeanValidation",
                                                          BVNLSConstants.BV_RESOURCE_BUNDLE);
-
-    private static final PrivilegedAction<ThreadContextAccessor> getThreadContextAccessorAction =
-                    new PrivilegedAction<ThreadContextAccessor>() {
-                        @Override
-                        public ThreadContextAccessor run() {
-                            return ThreadContextAccessor.getThreadContextAccessor();
-                        }
-                    };
 
     /**
      * This method is used to get a default ValidatorFactory to be used for JavaBean validation.
@@ -91,9 +81,7 @@ public class ValidatorFactoryAccessor {
             classLoader = BeanValidationExtensionHelper.newValidationClassLoader(tuple.classLoader);
 
             // set the thread context class loader to be used, must be reset in finally block
-            ThreadContextAccessor tca = System.getSecurityManager() == null ?
-                            ThreadContextAccessor.getThreadContextAccessor() :
-                            AccessController.doPrivileged(getThreadContextAccessorAction);
+            ThreadContextAccessor tca = ThreadContextAccessor.getThreadContextAccessor();
             setClassLoader = new SetContextClassLoaderPrivileged(tca);
             oldClassLoader = setClassLoader.execute(classLoader);
             if (TraceComponent.isAnyTracingEnabled() && tc.isDebugEnabled()) {
@@ -203,9 +191,7 @@ public class ValidatorFactoryAccessor {
             } else {
                 classLoader = BeanValidationExtensionHelper.newValidation10ClassLoader(tuple.classLoader);
             }
-            ThreadContextAccessor tca = System.getSecurityManager() == null ?
-                            ThreadContextAccessor.getThreadContextAccessor() :
-                            AccessController.doPrivileged(getThreadContextAccessorAction);
+            ThreadContextAccessor tca = ThreadContextAccessor.getThreadContextAccessor();
 
             // set the thread context class loader to be used, must be reset in finally block
             setClassLoader = new SetContextClassLoaderPrivileged(tca);
