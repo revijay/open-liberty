@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2025 IBM Corporation and others.
+    All rights reserved. This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    http://www.eclipse.org/legal/epl-2.0/
+
+    SPDX-License-Identifier: EPL-2.0
+
+    Contributors:
+        IBM Corporation - initial API and implementation
+
+    Validation configuration for the val40sl test application.
+
+    References the two constraint-mapping files that bind validators to
+    @ValidUuid2 and @ValidUuid3 via XML (Jakarta Validation issue #257).
+-->
+<validation-config
+    xmlns="https://jakarta.ee/xml/ns/validation/configuration"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/validation/configuration
+        https://jakarta.ee/xml/ns/validation/configuration/validation-configuration-3.0.xsd"
+    version="3.0">
+
+    <!-- XML-only registration: ValidUuid2 → ValidUuidXmlValidator -->
+    <constraint-mapping>WEB-INF/constraints-uuid-xml.xml</constraint-mapping>
+
+    <!-- All-three-present precedence: ValidUuid3, XML wins (include-existing-validators="false") -->
+    <constraint-mapping>WEB-INF/constraints-uuid-precedence.xml</constraint-mapping>
+
+</validation-config>
