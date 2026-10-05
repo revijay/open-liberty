@@ -4,9 +4,7 @@
 
 Jakarta Validation 4.0 (issue #260) clarifies the behaviour when both a
 **legacy field-level `@Valid`** and a **type-argument `@Valid`** are present on
-the same container field. The combination is declared to have **undefined behaviour**,
-and implementations are required to **warn the user** when it is detected.
-A future spec version will ban the legacy form entirely.
+the same container field. The combination is declared to have **undefined behaviour**.
 
 ---
 
@@ -97,31 +95,15 @@ All three were technically permissible before 4.0 because the spec was silent.
 
 ### 1. Declares the combination as undefined behaviour
 
-```
-"If both a legacy @Valid on the element and a type-argument @Valid are present
- on the same element, the behaviour is undefined."
-```
+Jakarta Validation 4.0 adds a single statement to the spec: if both a
+legacy field-level `@Valid` and a type-argument `@Valid` are present on the
+same element, the behaviour is **undefined**.
 
-This is an honest acknowledgement that enforcing a specific outcome now — when
-implementations have diverged — would be a breaking change.
+This is an honest acknowledgement that enforcing a specific outcome now —
+when implementations have already diverged — would be a breaking change.
 
-### 2. Requires implementations to warn
 
-```
-"Implementations are encouraged to issue a warning to the user when this
- combination is detected."
-```
-
-When detected, a provider should log something like:
-
-```
-WARN: Both a legacy @Valid and a type-argument @Valid are present on field
-'addresses' in class Customer. This combination has undefined behaviour per
-Jakarta Validation 4.0. Remove the field-level @Valid and keep only
-List<@Valid Address>. Future spec versions will make this a hard error.
-```
-
-### 3. Signals future deprecation of the legacy form
+### 2. Signals future deprecation of the legacy form
 
 The 4.0 spec explicitly states that a **future version** plans to:
 - No longer support field-level `@Valid` on container fields
@@ -137,7 +119,7 @@ The 4.0 spec explicitly states that a **future version** plans to:
 @Valid
 private List<Address> addresses;
 
-// ❌ Both — undefined behaviour, implementation must warn, future hard error
+// ❌ Both — undefined behaviour (spec prose only, no API change), future hard error
 @Valid
 private List<@Valid Address> addresses;
 
@@ -223,7 +205,7 @@ private final List<@Valid Address> bothAddresses;
 | Area | Impact |
 |---|---|
 | **Runtime today** | ✅ None — HV deduplicates double `@Valid`, elements validated once |
-| **Warning message** | 🔧 HV bundled with `validation-4.0` must log a WARN when both forms detected |
+description only, not normative spec text |
 | **Future spec version** | ⚠️ Double `@Valid` will become `ConstraintDeclarationException` — apps must migrate |
 | **New API** | ✅ None — `@Valid` annotation is unchanged |
 | **Customer migration** | Remove field-level `@Valid` from container fields; keep only type-argument form |
