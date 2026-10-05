@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2024 IBM Corporation and others.
+ * Copyright (c) 2017, 2025 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
@@ -11,9 +11,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package com.ibm.ws.beanvalidation.v20;
-
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 
 import javax.validation.Configuration;
 import javax.validation.Validation;
@@ -71,9 +68,9 @@ public class ValidatorFactoryBuilderImpl implements ValidatorFactoryBuilder {
             tuple = configureBvalClassloader(appClassLoader);
             ClassLoader tcclClassLoaderTmp = tuple.classLoader;
 
-            ClassLoader bvalClassLoader = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> new Validation20ClassLoader(tcclClassLoaderTmp, containerPath));
+            ClassLoader bvalClassLoader = new Validation20ClassLoader(tcclClassLoaderTmp, containerPath);
 
-            ThreadContextAccessor tca = AccessController.doPrivileged((PrivilegedAction<ThreadContextAccessor>) () -> ThreadContextAccessor.getThreadContextAccessor());
+            ThreadContextAccessor tca = ThreadContextAccessor.getThreadContextAccessor();
 
             // set the thread context class loader to be used, must be reset in finally block
             setClassLoader = new SetContextClassLoaderPrivileged(tca);
@@ -119,7 +116,7 @@ public class ValidatorFactoryBuilderImpl implements ValidatorFactoryBuilder {
 
     private ClassLoaderTuple configureBvalClassloader(ClassLoader cl) {
         if (cl == null) {
-            cl = AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> Thread.currentThread().getContextClassLoader());
+            cl = Thread.currentThread().getContextClassLoader();
         }
         if (cl != null) {
             if (classLoadingService.isThreadContextClassLoader(cl)) {
@@ -132,14 +129,11 @@ public class ValidatorFactoryBuilderImpl implements ValidatorFactoryBuilder {
     }
 
     private ClassLoader createTCCL(ClassLoader parentCL) {
-        return AccessController.doPrivileged((PrivilegedAction<ClassLoader>) () -> classLoadingService.createThreadContextClassLoader(parentCL));
+        return classLoadingService.createThreadContextClassLoader(parentCL);
     }
 
     private void releaseLoader(ClassLoader tccl) {
-        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
-            classLoadingService.destroyThreadContextClassLoader(tccl);
-            return null;
-        });
+        classLoadingService.destroyThreadContextClassLoader(tccl);
     }
 
     @Activate
