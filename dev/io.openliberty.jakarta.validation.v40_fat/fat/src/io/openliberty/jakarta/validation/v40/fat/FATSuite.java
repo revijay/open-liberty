@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
                 Validation40Test.class,
                 TypeValidatorSelectionTest.class,
+                ServiceLoaderValidatorTest.class,
 })
 public class FATSuite {
 
