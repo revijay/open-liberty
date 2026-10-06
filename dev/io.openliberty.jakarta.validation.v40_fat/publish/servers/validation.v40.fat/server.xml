@@ -26,6 +26,8 @@
     <application location="val40cascade.war" />
     <application location="val40grp.war" />
     <application location="val40init.war" />
+    <application location="val40opt.war" />
     <application location="val40sl.war" />
+    <application location="val40tsr.war" />
 
 </server>
