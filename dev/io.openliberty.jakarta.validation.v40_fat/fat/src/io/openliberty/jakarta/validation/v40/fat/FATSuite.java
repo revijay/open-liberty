@@ -22,6 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
                 TypeValidatorSelectionTest.class,
                 ServiceLoaderValidatorTest.class,
                 OptionalViolationPathTest.class,
+                ArrayAnnotationTest.class,
 })
 public class FATSuite {
 

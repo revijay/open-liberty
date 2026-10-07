@@ -16,6 +16,7 @@ bVersion=1.0
 src: \
 	fat/src,\
 	test-applications/val40/src,\
+	test-applications/val40arr/src,\
 	test-applications/val40attr/src,\
 	test-applications/val40cascade/src,\
 	test-applications/val40grp/src,\
