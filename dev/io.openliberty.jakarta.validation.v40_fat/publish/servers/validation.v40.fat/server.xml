@@ -22,6 +22,7 @@
     <include location="../fatTestPorts.xml"/>
 
     <application location="val40.war" />
+    <application location="val40arr.war" />
     <application location="val40attr.war" />
     <application location="val40cascade.war" />
     <application location="val40grp.war" />
