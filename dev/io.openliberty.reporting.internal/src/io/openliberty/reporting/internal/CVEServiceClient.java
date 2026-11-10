@@ -51,9 +51,12 @@ public class CVEServiceClient {
      * @param urlLink URL link which is set in the Server.xml
      * @throws IOException
      */
-    public void retrieveCVEData(Map<String, String> data, String urlLink) throws IOException {
+    public int retrieveCVEData(Map<String, String> data, String urlLink) throws IOException {
 
         String jsonData = buildJsonString(data);
+
+        // TEMPORARY: log the exact JSON payload being sent so it can be replayed with curl
+        Tr.info(tc, "TEMPORARY - JSON payload being sent to UMS: " + jsonData);
 
         if (!urlLink.startsWith("https")) {
             throw new MalformedURLException("Invalid protocol, expected https");
@@ -75,6 +78,7 @@ public class CVEServiceClient {
         if (TraceComponent.isAnyTracingEnabled() && tc.isDebugEnabled()) {
             Tr.debug(this, tc, "Response code: " + responseCode);
         }
+        return responseCode;
     }
 
     /**
@@ -120,7 +124,7 @@ public class CVEServiceClient {
         
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Authorization", "Bearer urh3urh823u48j2eikmwd");
+        connection.setRequestProperty("Authorization", "Bearer cb87fddaa2bdaeef177dd0061c5907ced193da04f2e73955");
         connection.setDoOutput(true);
 
         return connection;

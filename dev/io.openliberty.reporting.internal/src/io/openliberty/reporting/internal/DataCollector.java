@@ -53,7 +53,7 @@ public class DataCollector {
     }
 
     private final String productId;
-    private final String productName = "Liberty";
+    private final String productName;
     private final String productMetric;
     private final String metricValue = "1";
     private final String productCloudpakRatio = "";
@@ -78,15 +78,21 @@ public class DataCollector {
 
         String productVersion;
         String productEdition;
+        String name;
         
         // the key is the productId
         if (allProductInfo.containsKey("com.ibm.websphere.appserver")) {
             productVersion = allProductInfo.get("com.ibm.websphere.appserver").getVersion();
             productEdition = allProductInfo.get("com.ibm.websphere.appserver").getEdition();
+            name = allProductInfo.get("com.ibm.websphere.appserver").getName();
         } else {
             productVersion = allProductInfo.get("io.openliberty").getVersion();
             productEdition = allProductInfo.get("io.openliberty").getEdition();
+            name = allProductInfo.get("io.openliberty").getName();
         }
+
+        // Use the product name from the installed product's version properties
+        this.productName = name;
 
         // Generate productId as a hash
         StringBuilder input = new StringBuilder();

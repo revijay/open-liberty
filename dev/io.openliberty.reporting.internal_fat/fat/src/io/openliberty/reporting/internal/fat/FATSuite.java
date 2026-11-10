@@ -20,6 +20,7 @@ import componenttest.custom.junit.runner.AlwaysPassesTest;
 @SuiteClasses({ AlwaysPassesTest.class,
                 CVEReportingConfigTest.class,
                 CVEDataTest.class,
+                CVEHappyPathTest.class,
 //                CVEResponseTest.class,
                 CVEReportingCheckpointTest.class
 })
