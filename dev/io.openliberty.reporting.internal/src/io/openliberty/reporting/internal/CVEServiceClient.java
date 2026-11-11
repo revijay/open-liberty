@@ -124,7 +124,7 @@ public class CVEServiceClient {
         
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/json");
-        connection.setRequestProperty("Authorization", "Bearer cb87fddaa2bdaeef177dd0061c5907ced193da04f2e73955");
+        connection.setRequestProperty("Authorization", "Bearer <UMS_TOKEN_PLACEHOLDER>");
         connection.setDoOutput(true);
 
         return connection;
